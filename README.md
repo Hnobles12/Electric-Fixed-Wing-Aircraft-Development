@@ -1,0 +1,2 @@
+# Electric-Fixed-Wing-Aircraft-Development
+This repository contains a framework for developing fixed wing UAS systems from preliminary sizing and airframe requirements to motor sizing, power requirements/management estimates, and other design related quantities. These methods are meant to be accessible for hobby aircraft designers and large aircraft designers alike.  The methods employed are tailored to electric powered aircraft using traditional props.
