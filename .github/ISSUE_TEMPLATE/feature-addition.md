@@ -1,7 +1,7 @@
 ---
 name: Feature Addition
 about: A feature to be implemented
-title: "[Feature]"
+title: 'Feature: [Feature]'
 labels: ''
 assignees: ''
 
