@@ -5,6 +5,7 @@ airfoil.py
 This file contains the airfoil class.
 '''
 
+import math as m
 from dataclasses import dataclass
 
 
@@ -20,13 +21,13 @@ class _Aifoil_data_line:
 
 
 class Airfoil:
-    def __init__(self, name: str = "airfoil", file: str = "airfoil.dat"):
+    def __init__(self, name: str = "airfoil", file: str = "airfoil.dat") -> None:
         self.name: str = name
         self.file: str = file
         self.data: list[_Aifoil_data_line] = []
         self.read_data()
 
-    def read_data(self):
+    def read_data(self) -> None:
 
         cl_max = 0
         cl_min = 0
@@ -55,7 +56,7 @@ class Airfoil:
         self.alpha_stall = alpha_stall
         self.alpha_min = alpha_min
 
-    def get_data(self, alpha: float):
+    def get_data(self, alpha: float) -> _Aifoil_data_line:
         '''
         Get closest data entry to alpha given.
         '''
@@ -68,3 +69,52 @@ class Airfoil:
                 a = data
 
         return a
+
+
+###############################################################################
+##############################  Wing Class ####################################
+###############################################################################
+
+class Wing:
+    def __init__(self, airfoil_file: str = 'airfoil.csv') -> None:
+        self.airfoil: Airfoil = Airfoil(file=airfoil_file)
+        self.airspeed: float = 0
+        self.span: float = 0
+        self.area: float = 0
+        self.AR: float = 0
+        self.e: float = 0
+        self.density: float = 0
+        self.aoa: float = 0
+
+        # Calculated values
+        self.lift: float = 0
+        self.tot_drag = 0
+        self.stall_speed: float = 0
+
+    def calc_area(self) -> float:
+        '''
+        Calculate wing area for lift desired.
+        '''
+        cl = self.airfoil.get_data(self.aoa).cl
+        self.area = self.lift / (self.cl*self.density*self.airspeed ** 2 / 2)
+        return self.area
+
+    def calc_lift(self) -> float:
+        '''
+        Calculate lift created by the wing.
+        '''
+        cl = self.airfoil.get_data(self.aoa).cl
+        self.lift = cl * self.area * airspeed ** 2 / 2
+        return self.lift
+
+    def calc_drag()->float:
+        '''
+        Calculate drag created by the wing.
+        '''
+        cl = self.airfoil.get_data(self.aoa).cl
+        cd0 = self.airfoil.get_data(self.aoa).cd
+        cdi = cl**2 / (m.pi * self.e * self.AR)
+        
+        self.tot_drag = cd0 + cdi
+        return self.tot_drag
+        
