@@ -21,8 +21,8 @@ class _Aifoil_data_line:
 
 class Airfoil:
     def __init__(self, name: str = "airfoil", file: str = "airfoil.dat"):
-        self.name = name
-        self.file = file
+        self.name: str = name
+        self.file: str = file
         self.data: list[_Aifoil_data_line] = []
         self.read_data()
 
@@ -52,7 +52,10 @@ class Airfoil:
                     cl_min = data_line.cl
                     alpha_min = data_line.alpha
 
-    def get_closest(self, alpha: float):
+        self.alpha_stall = alpha_stall
+        self.alpha_min = alpha_min
+
+    def get_data(self, alpha: float):
         '''
         Get closest data entry to alpha given.
         '''
