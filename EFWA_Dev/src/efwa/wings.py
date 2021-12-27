@@ -1,8 +1,8 @@
 '''
-airfoil.py
+wings.py
 
 
-This file contains the airfoil class.
+This file contains the airfoil and wing classes.
 '''
 
 import math as m
@@ -49,12 +49,14 @@ class Airfoil:
                 if data_line.cl >= cl_max:
                     cl_max = data_line.cl
                     alpha_stall = data_line.alpha
-                elif dataline.cl <= cl_min:
+                elif data_line.cl <= cl_min:
                     cl_min = data_line.cl
                     alpha_min = data_line.alpha
 
         self.alpha_stall = alpha_stall
         self.alpha_min = alpha_min
+        self.cl_max = cl_max
+        self.cl_min = cl_min
 
     def get_data(self, alpha: float) -> _Aifoil_data_line:
         '''
