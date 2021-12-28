@@ -80,13 +80,13 @@ class Airfoil:
 ###############################################################################
 
 class Wing:
-    def __init__(self,  airfoil_file: str = '', load_foil:bool = False) -> None:
+    def __init__(self,  airfoil_file: str = '', load_foil: bool = False) -> None:
         if load_foil or (airfoil_file != ''):
             self.airfoil: Airfoil = Airfoil(file=airfoil_file)
             self.foil_loaded = True
         else:
             self.foil_loaded = False
-        
+
         self.airspeed: float = 0
         self.span: float = 0
         self.area: float = 0
@@ -94,16 +94,13 @@ class Wing:
         self.e: float = 0
         self.density: float = 0
         self.aoa: float = 0
-        
-        
 
         # Calculated values
         self.lift: float = 0
         self.tot_drag = 0
         self.stall_speed: float = 0
-        
 
-    def check_airfoil_loaded(self, raise_err:bool=True)->bool:
+    def check_airfoil_loaded(self, raise_err: bool = True) -> bool:
         '''
         Check if an airfoil file is loaded and raise an exception if not. Can disable exception by setting arg raise_err to false.
         '''
@@ -114,13 +111,22 @@ class Wing:
                 raise AirfoilNotLoadedErr()
             else:
                 return False
-    
-    def load_airfoil(self, file:str):
+
+    def load_airfoil(self, file: str):
         '''
         Loads an airfoil file.
         '''
         self.airfoil = Airfoil(file=file)
         self.foil_loaded = True
+
+    def estimate_e(self, AR: float = None) -> float:
+        '''
+        Estimate the Oswald efficiency factor.
+        '''
+        if AR is None:
+            AR = self.AR
+        self.e = 1.78*(1 - 0.045*AR**0.68) - 0.64
+        return self.e
 
     def calc_area(self) -> float:
         '''
@@ -142,7 +148,7 @@ class Wing:
         self.lift = cl * self.area * airspeed ** 2 / 2
         return self.lift
 
-    def calc_drag()->float:
+    def calc_drag() -> float:
         '''
         Calculate drag created by the wing.
         '''
@@ -152,7 +158,6 @@ class Wing:
         cd0 = self.airfoil.get_data(self.aoa).cd
         cd = 0.5*self.density*self.airspeed**2*cd0*self.area
         cdi = cl**2 / (m.pi * self.e * self.AR)
-        
+
         self.tot_drag = cd + cdi
         return self.tot_drag
-        
