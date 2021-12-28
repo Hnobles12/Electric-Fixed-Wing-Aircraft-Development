@@ -150,8 +150,9 @@ class Wing:
 
         cl = self.airfoil.get_data(self.aoa).cl
         cd0 = self.airfoil.get_data(self.aoa).cd
+        cd = 0.5*self.density*self.airspeed**2*cd0*self.area
         cdi = cl**2 / (m.pi * self.e * self.AR)
         
-        self.tot_drag = cd0 + cdi
+        self.tot_drag = cd + cdi
         return self.tot_drag
         
