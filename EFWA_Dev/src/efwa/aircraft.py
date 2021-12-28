@@ -4,6 +4,7 @@ aircraft.py
 
 This file contains the aircraft class.
 '''
+from . import wings
 
 
 class Aircraft:
@@ -16,4 +17,4 @@ class Aircraft:
         self.mass = 0  # kg
 
         # Wing Properties
-        self.wing = Wing()
+        self.wing = wings.Wing()

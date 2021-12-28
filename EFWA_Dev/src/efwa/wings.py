@@ -8,6 +8,8 @@ This file contains the airfoil and wing classes.
 import math as m
 from dataclasses import dataclass
 
+from .errors import AirfoilNotLoadedErr
+
 
 @dataclass
 class _Aifoil_data_line:
@@ -78,8 +80,13 @@ class Airfoil:
 ###############################################################################
 
 class Wing:
-    def __init__(self, airfoil_file: str = 'airfoil.csv') -> None:
-        self.airfoil: Airfoil = Airfoil(file=airfoil_file)
+    def __init__(self,  airfoil_file: str = '', load_foil:bool = False) -> None:
+        if load_foil or (airfoil_file != ''):
+            self.airfoil: Airfoil = Airfoil(file=airfoil_file)
+            self.foil_loaded = True
+        else:
+            self.foil_loaded = False
+        
         self.airspeed: float = 0
         self.span: float = 0
         self.area: float = 0
@@ -87,16 +94,40 @@ class Wing:
         self.e: float = 0
         self.density: float = 0
         self.aoa: float = 0
+        
+        
 
         # Calculated values
         self.lift: float = 0
         self.tot_drag = 0
         self.stall_speed: float = 0
+        
+
+    def check_airfoil_loaded(self, raise_err:bool=True)->bool:
+        '''
+        Check if an airfoil file is loaded and raise an exception if not. Can disable exception by setting arg raise_err to false.
+        '''
+        if self.foil_loaded:
+            return True
+        else:
+            if raise_err:
+                raise AirfoilNotLoadedErr()
+            else:
+                return False
+    
+    def load_airfoil(self, file:str):
+        '''
+        Loads an airfoil file.
+        '''
+        self.airfoil = Airfoil(file=file)
+        self.foil_loaded = True
 
     def calc_area(self) -> float:
         '''
         Calculate wing area for lift desired.
         '''
+        self.check_airfoil_loaded()
+
         cl = self.airfoil.get_data(self.aoa).cl
         self.area = self.lift / (self.cl*self.density*self.airspeed ** 2 / 2)
         return self.area
@@ -105,6 +136,8 @@ class Wing:
         '''
         Calculate lift created by the wing.
         '''
+        self.check_airfoil_loaded()
+
         cl = self.airfoil.get_data(self.aoa).cl
         self.lift = cl * self.area * airspeed ** 2 / 2
         return self.lift
@@ -113,6 +146,8 @@ class Wing:
         '''
         Calculate drag created by the wing.
         '''
+        self.check_airfoil_loaded()
+
         cl = self.airfoil.get_data(self.aoa).cl
         cd0 = self.airfoil.get_data(self.aoa).cd
         cdi = cl**2 / (m.pi * self.e * self.AR)
