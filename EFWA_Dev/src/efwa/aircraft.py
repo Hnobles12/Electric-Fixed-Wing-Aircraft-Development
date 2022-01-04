@@ -5,6 +5,9 @@ aircraft.py
 This file contains the aircraft class.
 '''
 from . import wings
+from . import motor
+from . import power
+
 
 
 class Aircraft:
@@ -18,3 +21,4 @@ class Aircraft:
 
         # Wing Properties
         self.wing = wings.Wing()
+        
